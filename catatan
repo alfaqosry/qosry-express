@@ -1,0 +1,28 @@
+validasi
+npm install joi
+
+UNTUK EXPRESS
+npm install express
+npm install --save-dev @types/express
+
+PRISMA UNTUK MIGRATION
+npm install --save-dev prisma
+
+LOGER WINSTON
+npm install winston
+
+BCRYPT UNTUK PASWORD
+npm install bcrypt
+npm install --save-dev @types/bcrypt
+
+UUID
+npm install uuid
+npm install --save-dev @types/uuid
+
+UNIT TEST
+npm install --save-dev jest @types/jest
+
+
+
+
+
