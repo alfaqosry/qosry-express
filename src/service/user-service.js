@@ -1,9 +1,10 @@
-import { PrismaClient } from "@prisma/client/extension";
-import { registerUserValidation } from "../validation/user-validation.js";
+import { loginUserValidation, registerUserValidation } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
+import jwt from "jsonwebtoken";
 
 
 
@@ -29,10 +30,55 @@ const register = async (request) => {
             username: true,
             name: true
         }
-    })
+    });
 
-    
+
+
 }
+
+
+const login = async (request) => {
+
+    const loginRequest = validate(loginUserValidation, request);
+
+    const user = await prismaClient.user.findUnique({ where: { username: loginRequest.username }, select: { username: true, password: true } });
+
+
+    if (!user) {
+
+        throw new ResponseError(400, "Invalid username or password");
+    }
+    const isPasswordValid = await bcrypt.compare(loginRequest.password, user.password);
+
+
+
+    if (!isPasswordValid) {
+        throw new ResponseError(400, "Invalid username or password");
+    }
+
+    // const token = uuid().toString();
+    // await prismaClient.user.update({
+    //     data: {
+    //         token: token
+    //     },
+    //     where: {
+    //         username: user.username
+    //     },
+    //     select: { token: true }
+    // });
+
+    const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+
+    return { token };
+
+}
+
 export default {
-    register
+    register,
+    login
 }

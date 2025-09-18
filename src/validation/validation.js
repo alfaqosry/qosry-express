@@ -2,9 +2,16 @@ import { ResponseError } from "../error/response-error.js";
 
 const validate = (schema, request) => {
 
-    const result = schema.validate(request)
+    const result = schema.validate(request,{
+
+        abortEarly: false,
+        allowUnknown: true,
+    
+    });
+
+
     if (result.error) {
-        throw ResponseError(400, result.error.message);
+        throw new ResponseError(400, result.error.message);
 
     } else {
         return result.value;
