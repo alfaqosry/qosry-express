@@ -15,24 +15,37 @@ datasource db {
 }
 
 model User {
+  username    String        @id @db.VarChar(100)
+  password    String        @db.VarChar(100)
+  name        String        @db.VarChar(100)
+  token       String?       @db.VarChar(100)
+  detailusers DetailUsers[]
+  Article     Article[]
 
- username String @id @db.VarChar(100)
- password String @db.VarChar(100)
- name String @db.VarChar(100)
- token String? @db.VarChar(100)
- detailusers DetailUsers[]
-
- @@map("user")
+  @@map("user")
 }
 
 model DetailUsers {
+  id           Int     @id @default(autoincrement())
+  nama_lengkap String  @db.VarChar(100)
+  email        String? @db.VarChar(100)
+  username     String  @db.VarChar(100)
+  user         User    @relation(fields: [username], references: [username])
 
-  id Int @id @default(autoincrement())
-  nama_lengkap String @db.VarChar(100)
-  email String? @db.VarChar(100)
-  username String @db.VarChar(100)
-  user User @relation(fields: [username], references: [username])
-  
   @@map("detailusers")
+}
 
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(200)
+  content   String   @db.Text
+  category  String   @db.VarChar(100)
+  tags      String?  @db.VarChar(200)
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  username  String   @db.VarChar(100)
+  user      User     @relation(fields: [username], references: [username])
+
+  @@map("article")
 }
